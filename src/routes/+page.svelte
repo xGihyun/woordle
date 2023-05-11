@@ -51,6 +51,9 @@
 	}
 
 	function addLetter(letter: string) {
+		const box = document.querySelector(`[data-num="${currentRow}-${currentCol}"]`);
+		box?.classList.add('animate-expand');
+
 		if (currentCol === 6) return;
 
 		matrix[currentRow][currentCol] = letter;
@@ -58,6 +61,9 @@
 	}
 
 	function removeLetter() {
+		const box = document.querySelector(`[data-num="${currentRow}-${currentCol - 1}"]`);
+		box?.classList.remove('animate-expand');
+
 		if (currentCol === 0) return;
 
 		matrix[currentRow][currentCol - 1] = '';
@@ -65,27 +71,35 @@
 	}
 
 	function revealWord(guess: string) {
-		for (let i = 0; i < 6; i++) {
-			const box = document.querySelector(`[data-num="${currentRow}-${i}"]`);
-			const letter = box?.textContent as string;
+		const animationDuration = 500;
 
-			if (secretWord[i] === guess[i]) {
-				box?.classList.add('bg-green-500');
-			} else if (secretWord.includes(guess[i])) {
-				box?.classList.add('bg-yellow-500');
-			} else {
-				box?.classList.add('bg-neutral-600');
-			}
+		for (let i = 0; i < 6; i++) {
+			const box = document.querySelector(`[data-num="${currentRow}-${i}"]`) as HTMLDivElement;
+
+			setTimeout(() => {
+				if (secretWord[i] === guess[i]) {
+					box.classList.add('bg-green-500');
+				} else if (secretWord.includes(guess[i])) {
+					box.classList.add('bg-yellow-500');
+				} else {
+					box.classList.add('bg-neutral-600');
+				}
+			}, ((i + 1) * animationDuration) / 2);
+
+			box.classList.add('animate-flip');
+			box.style.animationDelay = `${(i * animationDuration) / 2}ms`;
 		}
 
 		const isWinner = secretWord === guess;
 		const isGameOver = currentRow === 6;
 
-		if (isWinner) {
-			alert('Congratulations!');
-		} else if (isGameOver) {
-			alert(`Nice try! The word was ${secretWord}.`);
-		}
+		setTimeout(() => {
+			if (isWinner) {
+				alert('Congratulations!');
+			} else if (isGameOver) {
+				alert(`Nice try! The word was ${secretWord}.`);
+			}
+		}, 3 * animationDuration);
 	}
 
 	onMount(() => {
@@ -94,11 +108,11 @@
 	});
 </script>
 
-<div class="grid grid-rows-6 grid-cols-6 place-items-center gap-4 max-w-lg">
+<div class="grid grid-rows-box grid-cols-box place-items-center gap-2 max-w-lg mx-auto">
 	{#each matrix as rows, rowIdx (rowIdx)}
 		{#each rows as letter, letterIdx (letterIdx)}
 			<div
-				class="w-16 h-16 border-2 border-white uppercase text-white text-5xl grid place-items-center"
+				class="w-16 h-16 border-2 border-white uppercase text-white text-4xl grid place-items-center"
 				data-num={`${rowIdx}-${letterIdx}`}
 			>
 				{letter}
