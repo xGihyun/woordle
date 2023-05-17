@@ -12,6 +12,8 @@
 	let isWinner = false;
 	let isGameOver = false;
 
+	const animationDuration = 500;
+
 	function keyboardEvents() {
 		document.body.onkeydown = (e) => {
 			const key = e.key;
@@ -73,16 +75,18 @@
 	}
 
 	function revealWord(guess: string) {
-		const animationDuration = 500;
-
 		for (let i = 0; i < 6; i++) {
 			const box = document.querySelector(`[data-num="${currentRow}-${i}"]`) as HTMLDivElement;
 
 			setTimeout(() => {
 				if (secretWord[i] === guess[i]) {
 					box.classList.add('bg-green-500');
+					box.classList.remove('border-neutral-600');
+					box.classList.add('border-green-500');
 				} else if (secretWord.includes(guess[i])) {
 					box.classList.add('bg-yellow-500');
+					box.classList.remove('border-neutral-600');
+					box.classList.add('border-yellow-500');
 				} else {
 					box.classList.add('bg-neutral-600');
 				}
@@ -92,13 +96,11 @@
 			box.style.animationDelay = `${(i * animationDuration) / 2}ms`;
 		}
 
-		isGameOver = currentRow === 6;
-
 		setTimeout(() => {
 			if (secretWord === guess) {
 				isWinner = true;
-			} else if (isGameOver) {
-				alert(`Nice try! The word was ${secretWord}.`);
+			} else if (currentRow === 6) {
+				isGameOver = true;
 			}
 		}, 3 * animationDuration);
 	}
@@ -118,19 +120,13 @@
 		const box = document.querySelectorAll(`[data-num]`) as NodeListOf<HTMLDivElement>;
 
 		box.forEach((box) => {
-			if (box.classList.contains('bg-green-500')) {
-				box.classList.remove('bg-green-500');
-			}
-			if (box.classList.contains('bg-yellow-500')) {
-				box.classList.remove('bg-yellow-500');
-			}
-			if (box.classList.contains('bg-neutral-600')) {
-				box.classList.remove('bg-neutral-600');
-			}
-			if (box.classList.contains('animate-flip')) {
-				box.classList.remove('animate-flip');
-			}
-
+			box.classList.remove('bg-green-500');
+			box.classList.remove('border-green-500');
+			box.classList.remove('border-yellow-500');
+			box.classList.add('border-neutral-600');
+			box.classList.remove('bg-yellow-500');
+			box.classList.remove('bg-neutral-600');
+			box.classList.remove('animate-flip');
 			box.style.animationDelay = '';
 		});
 	}
@@ -141,11 +137,11 @@
 	});
 </script>
 
-<div class="grid grid-rows-box grid-cols-box place-items-center gap-2 max-w-lg mx-auto">
+<div class="grid grid-rows-6 grid-cols-6 place-items-center gap-2 max-w-lg">
 	{#each matrix as rows, rowIdx (rowIdx)}
 		{#each rows as letter, letterIdx (letterIdx)}
 			<div
-				class="w-16 h-16 border-2 border-neutral-500 uppercase text-white text-4xl grid place-items-center select-none"
+				class="w-16 h-16 border-2 border-neutral-600 uppercase text-white text-4xl grid place-items-center select-none"
 				data-num={`${rowIdx}-${letterIdx}`}
 			>
 				{letter}
@@ -153,8 +149,14 @@
 		{/each}
 	{/each}
 </div>
-<div class={`my-10 flex flex-col items-center ${isWinner ? 'visible' : 'invisible'}`}>
-	<p class="text-white text-3xl mb-5">Great job!</p>
+<div class={`my-10 flex flex-col items-center ${isWinner || isGameOver ? 'visible' : 'invisible'}`}>
+	<p class="text-white text-3xl mb-5">
+		{#if isWinner}
+			Great job!
+		{:else if isGameOver}
+			Better luck next time! The word was {secretWord.toUpperCase()}
+		{/if}
+	</p>
 	<button class="text-black bg-white text-2xl px-4 py-2 rounded-lg max-w-fit" on:click={reset}
 		>Restart</button
 	>

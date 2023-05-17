@@ -23,3 +23,9 @@ body{
 	src: url('./assets/fonts/gt-walsheim-pro/GTWalsheimPro-Medium.ttf');
 	font-display: swap;
 }
+
+@font-face {
+	font-family: fenomen-slab-xcn-black;
+	src: url('./assets/fonts/fenomen-slab/Fenomen-Slab-XCN-Black.otf');
+	font-display: swap;
+}

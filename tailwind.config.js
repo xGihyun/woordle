@@ -26,6 +26,9 @@ export default {
         flip: "flip 0.5s ease-in-out",
       },
     },
+    fontFamily: {
+      "fenomen-slab-xcn-black": "fenomen-slab-xcn-black, sans-serif"
+    }
   },
   plugins: [],
 }
