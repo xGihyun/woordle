@@ -4,10 +4,16 @@ export default {
   theme: {
     extend: {
       gridTemplateColumns: {
-        'box': 'repeat(6, minmax(0, 4rem))',
+        'box': 'repeat(6, 1fr)',
       },
       gridTemplateRows: {
-        'box': 'repeat(6, minmax(0, 4rem))',
+        'box': 'repeat(6, 1fr)',
+      },
+      colors: {
+        "accent": "rgb(222, 75, 0)"
+      },
+      boxShadow: {
+        "accent": "rgb(222, 75, 0) 0px 0px 20px",
       },
       keyframes: {
         expand: {
@@ -27,7 +33,8 @@ export default {
       },
     },
     fontFamily: {
-      "fenomen-slab-xcn-black": "fenomen-slab-xcn-black, sans-serif"
+      "fenomen-slab-xcn-black": "fenomen-slab-xcn-black, sans-serif",
+      "gt-walsheim-pro-medium": "gt-walsheim-pro-medium, sans-serif"
     }
   },
   plugins: [],

@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	const words = ['router', 'burned', 'glitch', 'crooks', 'abcdef', 'flowse', 'pouthe', 'wanton'];
+	// const words = ['router', 'burned', 'glitch', 'crooks', 'abcdef', 'flowse', 'pouthe', 'wanton'];
+	const words = ['router', 'burned', 'glitch', 'crooks', 'wanton'];
 	let secretWord = words[Math.floor(Math.random() * words.length)];
+	const currentSecretWord = secretWord;
 	let matrix = Array(6)
 		.fill('')
 		.map(() => Array(6).fill(''));
@@ -106,6 +108,10 @@
 	}
 
 	function reset() {
+		document.addEventListener('keydown', function (event) {
+			event.preventDefault();
+		});
+
 		secretWord = words[Math.floor(Math.random() * words.length)];
 		matrix = Array(6)
 			.fill('')
@@ -127,6 +133,7 @@
 			box.classList.remove('bg-yellow-500');
 			box.classList.remove('bg-neutral-600');
 			box.classList.remove('animate-flip');
+			box.classList.remove('animate-expand');
 			box.style.animationDelay = '';
 		});
 	}
@@ -137,27 +144,59 @@
 	});
 </script>
 
-<div class="grid grid-rows-6 grid-cols-6 place-items-center gap-2 max-w-lg">
-	{#each matrix as rows, rowIdx (rowIdx)}
-		{#each rows as letter, letterIdx (letterIdx)}
-			<div
-				class="w-16 h-16 border-2 border-neutral-600 uppercase text-white text-4xl grid place-items-center select-none"
-				data-num={`${rowIdx}-${letterIdx}`}
-			>
-				{letter}
-			</div>
-		{/each}
-	{/each}
-</div>
-<div class={`my-10 flex flex-col items-center ${isWinner || isGameOver ? 'visible' : 'invisible'}`}>
-	<p class="text-white text-3xl mb-5">
-		{#if isWinner}
-			Great job!
-		{:else if isGameOver}
-			Better luck next time! The word was {secretWord.toUpperCase()}
-		{/if}
-	</p>
-	<button class="text-black bg-white text-2xl px-4 py-2 rounded-lg max-w-fit" on:click={reset}
-		>Restart</button
+<div class="flex justify-center">
+	<div
+		class="grid h-[400px] min-h-[300px] w-[400px] min-w-[300px] grid-cols-6 grid-rows-6 place-items-center gap-[1px] sm:gap-4"
 	>
+		{#each matrix as rows, rowIdx (rowIdx)}
+			{#each rows as letter, letterIdx (letterIdx)}
+				<div
+					class="grid h-14 w-14 select-none place-items-center border-2 border-neutral-600 text-4xl uppercase text-white sm:h-16 sm:w-16"
+					data-num={`${rowIdx}-${letterIdx}`}
+				>
+					{letter}
+				</div>
+			{/each}
+		{/each}
+	</div>
 </div>
+
+<!-- {#if isWinner || isGameOver} -->
+<div class="absolute left-0 top-0 z-10 h-full w-full overflow-hidden">
+	<div
+		class={`absolute left-0 top-0 z-10 h-full w-full bg-black transition-[opacity] duration-1000 ${
+			isWinner || isGameOver ? 'opacity-50' : 'opacity-0 delay-700'
+		}`}
+	/>
+	<div class="relative z-20 flex h-full items-center justify-center">
+		<div
+			class={`flex flex-col items-center justify-center rounded-lg bg-neutral-800 p-6 transition-[transform,opacity] duration-1000 ${
+				isWinner || isGameOver
+					? 'translate-y-0 opacity-100 delay-700'
+					: 'translate-y-[calc(100%+1000px)] opacity-0'
+			}`}
+		>
+			<span class="mb-10 text-4xl text-white">
+				{#if isWinner}
+					Great job!
+				{:else if isGameOver}
+					Better luck next time!
+				{/if}
+			</span>
+			<p class="mb-5 text-2xl">
+				<span class="text-white">The word was</span>
+				<a
+					class="text-red-500 transition-colors duration-300 hover:text-red-700 hover:underline"
+					href={`https://www.dictionary.com/browse/${currentSecretWord}`}
+					target="_blank"
+					rel="noreferrer">{secretWord.toUpperCase()}</a
+				>
+			</p>
+			<button
+				class="max-w-fit rounded-lg bg-white px-3 py-1 text-xl text-black transition-colors duration-300 hover:bg-neutral-400"
+				on:click={reset}>Try Again!</button
+			>
+		</div>
+	</div>
+</div>
+<!-- {/if} -->
