@@ -170,10 +170,8 @@
 	/>
 	<div class="relative z-20 flex h-full items-center justify-center">
 		<div
-			class={`flex flex-col items-center justify-center rounded-lg bg-neutral-800 p-6 transition-[transform,opacity] duration-1000 ${
-				isWinner || isGameOver
-					? 'translate-y-0 opacity-100 delay-700'
-					: 'translate-y-[calc(100%+1000px)] opacity-0'
+			class={`flex flex-col items-center justify-center rounded-lg bg-neutral-800 p-6 ${
+				isWinner || isGameOver ? 'block' : 'hidden'
 			}`}
 		>
 			<span class="mb-10 text-4xl text-white">
